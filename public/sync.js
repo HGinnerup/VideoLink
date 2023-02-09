@@ -1,4 +1,4 @@
-const client = new WebSocket(`ws://${location.host}`);
+const client = new WebSocket(`wss://${location.host}`);
 
 client.onOpen = () => { };
 

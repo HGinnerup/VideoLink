@@ -1,11 +1,23 @@
 import express from "express";
+import * as fs from "fs";
+import https from "https"
 import ws from "ws";
+import * as os from "os"
+import * as path from "path"
 
 
 const videoFilePath = "";
 
+const homedir = os.homedir();
+const httpKeyPath = path.join(homedir, "ssl/key.pem");
+const httpCertPath = path.join(homedir, "ssl/cert.pem");
 
 const app = express()
+
+const server = https.createServer({
+    key: fs.readFileSync(httpKeyPath),
+    cert: fs.readFileSync(httpCertPath)
+}, app)
 
 app.get("/movie", (request, response) => {
     response.sendFile(videoFilePath);
@@ -19,7 +31,7 @@ wsServer.on('connection', socket => {
 //   socket.on('message', message => console.log(message));
 });
 
-const server = app.listen(3000)
+server.listen(3000);
 
 
 let nextClientId = 1;
