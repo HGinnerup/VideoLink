@@ -3,9 +3,20 @@
     <head>
         <title>VideoLink</title>
         <style>
-            * {margin:0; padding:0;}
+            * { margin:0; padding:0; }
+            video { width: 100vw; }
         </style>
     </head>
-    <video src="/movie" controls></video>
+
+    <video id="video" controls preload="metadata">
+        <source src="/movie" type="video/mp4" />
+        <track
+          label="English"
+          kind="subtitles"
+          srclang="en"
+          src="captions/captions.vtt"
+          default />
+      </video>
+
     <script src="sync.js"></script>
 </html>

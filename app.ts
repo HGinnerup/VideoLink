@@ -4,9 +4,13 @@ import https from "https"
 import ws from "ws";
 import * as os from "os"
 import * as path from "path"
+const srtVtt = require("srt-to-vtt");
 
 
 const videoFilePath = "";
+const captionsFilePath = "";
+
+fs.createReadStream(captionsFilePath).pipe(srtVtt()).pipe(fs.createWriteStream('public/captions/captions.vtt'))
 
 const homedir = os.homedir();
 const httpKeyPath = path.join(homedir, "ssl/key.pem");
