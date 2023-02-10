@@ -31,20 +31,21 @@ client.addEventListener("message", (event) => {
     doingSyncedActionTimer = setTimeout(() => {doingSyncedAction = false;}, 300)
 });
 
-client.actionListener.addEventListener("play", (data) => {
-    video.currentTime = data.currentTime;
+client.actionListener.addEventListener("play", (event) => {
+    console.log("play", event.data)
+    video.currentTime = event.data.currentTime;
     video.play();
 });
 
-client.actionListener.addEventListener("seek", (data) => {
-    video.currentTime = data.currentTime;
+client.actionListener.addEventListener("seek", (event) => {
+    video.currentTime = event.data.currentTime;
 });
 
-client.actionListener.addEventListener("pause", (data) => {
+client.actionListener.addEventListener("pause", (event) => {
     video.pause();
 });
 
-client.actionListener.addEventListener("ping", (data) => {
+client.actionListener.addEventListener("ping", (event) => {
     clientSend("pong", {})
 });
 
