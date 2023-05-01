@@ -10,7 +10,6 @@ const srtVtt = require("srt-to-vtt");
 const videoFilePath = "";
 const captionsFilePath = "";
 
-fs.createReadStream(captionsFilePath).pipe(srtVtt()).pipe(fs.createWriteStream('public/captions/captions.vtt'))
 
 const homedir = os.homedir();
 const httpKeyPath = path.join(homedir, "ssl/key.pem");
@@ -25,6 +24,22 @@ const server = https.createServer({
 
 app.get("/movie", (request, response) => {
     response.sendFile(videoFilePath);
+});
+
+app.get("/captions", async (request, response) => { 
+    try {
+        if(!fs.existsSync(captionsFilePath)) {
+            response.status(404)
+            response.end("Captions not found")
+            return;
+        }
+
+        fs.createReadStream(captionsFilePath).pipe(srtVtt()).pipe(response);
+    }
+    catch(err) {
+        response.status(505)
+        response.end(String(err))
+    }
 });
 
 app.use(express.static("public"))
