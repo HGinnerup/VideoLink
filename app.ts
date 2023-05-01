@@ -1,9 +1,11 @@
 import express from "express";
+import * as zlib from "zlib"
 import * as fs from "fs";
 import https from "https"
 import ws from "ws";
 import * as os from "os"
 import * as path from "path"
+import compression from "compression";
 const srtVtt = require("srt-to-vtt");
 
 
@@ -16,6 +18,13 @@ const httpKeyPath = path.join(homedir, "ssl/key.pem");
 const httpCertPath = path.join(homedir, "ssl/cert.pem");
 
 const app = express()
+
+app.use(compression({
+    level: zlib.constants.Z_BEST_COMPRESSION,
+    memLevel: zlib.constants.Z_MAX_MEMLEVEL,
+    strategy: zlib.constants.Z_HUFFMAN_ONLY,
+    filter: () => true
+}));
 
 const server = https.createServer({
     key: fs.readFileSync(httpKeyPath),
