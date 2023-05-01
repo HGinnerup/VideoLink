@@ -49,8 +49,40 @@ client.actionListener.addEventListener("ping", (event) => {
     clientSend("pong", {})
 });
 
+client.actionListener.addEventListener("getTime", (event) => {
+    clientSend("currentTime", {
+        currentTime: video.currentTime,
+        isPlaying: video.currentTime>0 && !video.paused && !video.ended
+    })
+});
+
+function syncJoin() {
+    function join(event) {
+        video.currentTime = event.data.currentTime;
+        if(event.data.isPlaying)
+            video.play();
+        else 
+            video.pause();
+
+        client.actionListener.removeEventListener("currentTime", join);
+    };
+
+    clientSend("getTime");
+    client.actionListener.addEventListener("currentTime", join);
+}
 
 
+function onFirstPlay(event) {
+    syncJoin();
+    subscribeVideoEvents();
+    event.preventDefault();
+    video.removeEventListener("play", onFirstPlay);
+    return false;
+}
+video.addEventListener("play", onFirstPlay);
+
+
+function subscribeVideoEvents() {
 video.onplay = () => {
     if(doingSyncedAction) return;
     clientSend("play", {currentTime: video.currentTime});
@@ -64,6 +96,7 @@ video.onseeked = () => {
 video.onpause = () => {
     if(doingSyncedAction) return;
     clientSend("pause", {});
+    }
 }
 
 
