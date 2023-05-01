@@ -83,19 +83,19 @@ video.addEventListener("play", onFirstPlay);
 
 
 function subscribeVideoEvents() {
-video.onplay = () => {
-    if(doingSyncedAction) return;
-    clientSend("play", {currentTime: video.currentTime});
-}
-
-video.onseeked = () => {
-    if(doingSyncedAction) return;
-    clientSend("seek", {currentTime: video.currentTime});
-}
-
-video.onpause = () => {
-    if(doingSyncedAction) return;
-    clientSend("pause", {});
+    video.onplay = () => {
+        if(doingSyncedAction) return;
+        clientSend("play", {currentTime: video.currentTime});
+    }
+    
+    video.onseeked = () => {
+        if(doingSyncedAction) return;
+        clientSend("seek", {currentTime: video.currentTime});
+    }
+    
+    video.onpause = () => {
+        if(doingSyncedAction) return;
+        clientSend("pause", {});
     }
 }
 
