@@ -100,6 +100,36 @@ function subscribeVideoEvents() {
 }
 
 
+(async function dragNDrop() {
+    async function setFile(name) {
+        await fetch("set-resource", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: name })
+        })
+    }
 
+    document.body.ondragover = (event) => {
+        event.preventDefault();
+    }
+
+    document.body.ondrop = (event) => {
+        event.preventDefault();
+
+        if (event.dataTransfer.items) {
+            for(let item of Array.from(event.dataTransfer.items)) {
+                if (item.kind === "file") {
+                    const file = item.getAsFile();
+                    setFile(file.name)
+                }
+            };
+        }
+        else {
+            for(let file of Array.from(event.dataTransfer.items)) {
+                setFile(file.name)
+            };
+        }
+    }
+})()
 
 

@@ -6,12 +6,14 @@ import ws from "ws";
 import * as os from "os"
 import * as path from "path"
 import compression from "compression";
+import * as fileUtil from "./util/fileUtil"
+
 const srtVtt = require("srt-to-vtt");
 
+const resourceDirectory = path.resolve("./resources")
 
-const videoFilePath = "";
-const captionsFilePath = "";
-
+let videoFilePath: string | null = null;
+let captionsFilePath: string | null = null;
 
 const homedir = os.homedir();
 const httpKeyPath = path.join(homedir, "ssl/key.pem");
@@ -25,6 +27,7 @@ app.use(compression({
     strategy: zlib.constants.Z_HUFFMAN_ONLY,
     filter: () => true
 }));
+app.use(express.json());
 
 const server = https.createServer({
     key: fs.readFileSync(httpKeyPath),
@@ -32,12 +35,18 @@ const server = https.createServer({
 }, app)
 
 app.get("/movie", (request, response) => {
+    if(videoFilePath === null) {
+        response.status(404)
+        response.end()
+        return;
+    }
+
     response.sendFile(videoFilePath);
 });
 
 app.get("/captions", async (request, response) => { 
     try {
-        if(!fs.existsSync(captionsFilePath)) {
+        if(captionsFilePath === null || !fs.existsSync(captionsFilePath)) {
             response.status(404)
             response.end("Captions not found")
             return;
@@ -49,6 +58,39 @@ app.get("/captions", async (request, response) => {
         response.status(505)
         response.end(String(err))
     }
+});
+
+app.post("/set-resource", async (request, response) => {
+    // @ts-ignore
+    if(request.client.address().address !== "::1"){
+        response.status(403)
+        response.send(`Only host can change files`);
+        return
+    }
+
+
+    let searchedFileName = request.body["filename"]
+    let foundFileName = await fileUtil.search(resourceDirectory, async (name, stats) =>
+        path.basename(name) === searchedFileName
+    )
+
+    if(foundFileName === null) {
+        response.status(404)
+        response.send(`File ${searchedFileName} not found.`);
+        return
+    }
+
+    // @ts-ignore
+    let mimeType:string = express.static.mime.types[path.extname(foundFileName).substr(1)]
+
+    let mimeMainType = mimeType.split("/")[0]
+    if(mimeMainType === "video")
+        videoFilePath = foundFileName;
+    else if(mimeType === "application/x-subrip")
+        captionsFilePath = foundFileName
+
+    response.status(200)
+    response.send("Success");
 });
 
 app.use(express.static("public"))
