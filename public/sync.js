@@ -3,7 +3,7 @@ const client = new WebSocket(`wss://${location.host}`);
 client.onOpen = () => { };
 
 function clientSend(action, data) {
-    client.send(JSON.stringify({"action": action, "data": data}));
+    client.send(JSON.stringify({ "action": action, "data": data }));
 }
 
 const video = document.querySelector("video");
@@ -23,12 +23,12 @@ client.addEventListener("message", (event) => {
         event.data = socketPackage.data;
         client.actionListener.dispatchEvent(event);
     }
-    catch(err) {
+    catch (err) {
         console.error("Unhandled socket message: ", err);
     }
 
     clearTimeout(doingSyncedActionTimer);
-    doingSyncedActionTimer = setTimeout(() => {doingSyncedAction = false;}, 300)
+    doingSyncedActionTimer = setTimeout(() => { doingSyncedAction = false; }, 300)
 });
 
 client.actionListener.addEventListener("play", (event) => {
@@ -52,16 +52,16 @@ client.actionListener.addEventListener("ping", (event) => {
 client.actionListener.addEventListener("getTime", (event) => {
     clientSend("currentTime", {
         currentTime: video.currentTime,
-        isPlaying: video.currentTime>0 && !video.paused && !video.ended
+        isPlaying: video.currentTime > 0 && !video.paused && !video.ended
     })
 });
 
 function syncJoin() {
     function join(event) {
         video.currentTime = event.data.currentTime;
-        if(event.data.isPlaying)
+        if (event.data.isPlaying)
             video.play();
-        else 
+        else
             video.pause();
 
         client.actionListener.removeEventListener("currentTime", join);
@@ -84,17 +84,17 @@ video.addEventListener("play", onFirstPlay);
 
 function subscribeVideoEvents() {
     video.onplay = () => {
-        if(doingSyncedAction) return;
-        clientSend("play", {currentTime: video.currentTime});
+        if (doingSyncedAction) return;
+        clientSend("play", { currentTime: video.currentTime });
     }
-    
+
     video.onseeked = () => {
-        if(doingSyncedAction) return;
-        clientSend("seek", {currentTime: video.currentTime});
+        if (doingSyncedAction) return;
+        clientSend("seek", { currentTime: video.currentTime });
     }
-    
+
     video.onpause = () => {
-        if(doingSyncedAction) return;
+        if (doingSyncedAction) return;
         clientSend("pause", {});
     }
 }
