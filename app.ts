@@ -7,6 +7,8 @@ import * as os from "os"
 import * as path from "path"
 import compression from "compression";
 import * as fileUtil from "./util/fileUtil"
+import { SyncManager } from "./SyncManager";
+import { SyncClient } from "./SyncClient";
 
 const srtVtt = require("srt-to-vtt");
 
@@ -97,44 +99,17 @@ app.use(express.static("public"))
 
 
 const wsServer = new ws.Server({ noServer: true });
-wsServer.on('connection', socket => {
-//   socket.on('message', message => console.log(message));
-});
-
-server.listen(3000);
 
 
-let nextClientId = 1;
-const clients:{ [id: number] : ws.WebSocket; } = {};
+server.listen(31845);
+
+
+const syncManager = new SyncManager();
 
 server.on('upgrade', (request, socket, head) => {
     wsServer.handleUpgrade(request, socket, head, socket => {
-        wsServer.emit('connection', socket, request);
+        syncManager.clients.addClient(new SyncClient(socket))
     });
 });
-
-wsServer.on("connection", (socket) => {
-    let id:number = nextClientId++;
-
-    clients[id] = socket;
-
-    socket.on("message", (data) => {
-
-        let message = data.toString();
-
-        for(let i in clients) {
-            let otherSocket = clients[i];
-            if(otherSocket == socket)
-                continue;
-
-            otherSocket.send(message);
-        }
-    })
-
-    socket.on("close", () => {
-        delete clients[id];
-    });
-});
-
 
 
