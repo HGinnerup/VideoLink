@@ -18,5 +18,8 @@
   },
   "devDependencies": {
     "@types/finalhandler": "^1.2.0"
+  },
+  "scripts": {
+    "setup": "mkdir resources && mkdir ssl && openssl req -newkey rsa:2048 -new -nodes -keyout ssl/key.pem -out ssl/cert.pem && openssl x509 -req -signkey ssl/key.pem -in ssl/cert.pem -out ssl/cert-signed.pem"
   }
 }

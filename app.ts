@@ -18,8 +18,8 @@ let videoFilePath: string | null = null;
 let captionsFilePath: string | null = null;
 
 const homedir = os.homedir();
-const httpKeyPath = path.join(homedir, "ssl/key.pem");
-const httpCertPath = path.join(homedir, "ssl/cert.pem");
+const httpKeyPath = "ssl/key.pem";
+const httpCertPath = "ssl/cert-signed.pem";
 
 const app = express()
 
