@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import ws from "ws";
 
 
-export type EventTypes = "socketClosed" | "play" | "seek" | "pause" | "ping" | "getTime"
+export type EventTypes = "socketClosed" | "play" | "seek" | "pause" | "ping" | "getTime" | "newVideo" | "newCaptions"
 export type SyncClientEvent = {
     senderId: number,
     action: EventTypes,

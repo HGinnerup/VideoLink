@@ -86,10 +86,22 @@ app.post("/set-resource", async (request, response) => {
     let mimeType:string = express.static.mime.types[path.extname(foundFileName).substr(1)]
 
     let mimeMainType = mimeType.split("/")[0]
-    if(mimeMainType === "video")
+    if(mimeMainType === "video") {
         videoFilePath = foundFileName;
-    else if(mimeType === "application/x-subrip")
+        syncManager.clients.broadcast({
+            senderId: -1,
+            action: "newVideo",
+            data: {}
+        });
+    }
+    else if(mimeType === "application/x-subrip") {
         captionsFilePath = foundFileName
+        syncManager.clients.broadcast({
+            senderId: -1,
+            action: "newCaptions",
+            data: {}
+        });
+    }
 
     response.status(200)
     response.send("Success");

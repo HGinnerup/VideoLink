@@ -56,6 +56,14 @@ client.actionListener.addEventListener("getTime", (event) => {
     })
 });
 
+client.actionListener.addEventListener("newVideo", (event) => {
+    video.load();
+});
+
+client.actionListener.addEventListener("newCaptions", (event) => {
+    // ...
+});
+
 function syncJoin() {
     function join(event) {
         video.currentTime = event.data.currentTime;
