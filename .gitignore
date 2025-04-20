@@ -105,3 +105,15 @@ dist
 
 ssl/
 resources/
+
+# Ignore compiled files
+app.js
+app.js.map
+ClientGroup.js
+ClientGroup.js.map
+SyncClient.js.map
+SyncManager.js
+SyncClient.js
+util/fileUtil.js
+util/fileUtil.js.map
+SyncManager.js.map

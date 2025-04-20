@@ -5,6 +5,7 @@
             "name": "Launch",
             "type": "node",
             "request": "launch",
+            "runtimeExecutable": "tsx",
             "args": [
                 "${workspaceFolder}/app.ts"
             ],
@@ -16,5 +17,17 @@
             "sourceMaps": true,
             "cwd": "${workspaceFolder}",
         },
+        {
+            "name": "Launch new",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "tsx",
+            "args": [
+                "${workspaceFolder}/app.ts"
+            ],
+            "runtimeArgs": [],
+            "sourceMaps": true,
+            "cwd": "${workspaceFolder}",
+        }
     ]
 }
